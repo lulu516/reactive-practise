@@ -1,10 +1,11 @@
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         List<String> companies = List.of("Google", "Apple", "Facebook", "Intel");
 
 
@@ -12,12 +13,12 @@ public class Main {
 
         System.out.println("got observable...");
 
-        feed.doOnNext(System.out::println)
-                .doOnError(throwable -> System.out.println("error " + throwable))
-                .doOnComplete(() -> System.out.println("complete"))
-                .takeUntil(stockInfo -> stockInfo.getTicker().equalsIgnoreCase("facebook") && stockInfo.getPrice() > 150)
-                .subscribe();
+        feed.subscribeOn(Schedulers.io())
+                .subscribe(stockInfo -> {
+                    System.out.println("Thread: " + Thread.currentThread());
+                    System.out.println(stockInfo);
+                });
 
-        System.out.println("done");
+        Thread.sleep(10000);
     }
 }
