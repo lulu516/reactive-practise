@@ -1,5 +1,4 @@
 import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 
 import java.util.List;
 
@@ -13,12 +12,16 @@ public class Main {
 
         System.out.println("got observable...");
 
-        feed.subscribeOn(Schedulers.io())
-                .subscribe(stockInfo -> {
-                    System.out.println("Thread: " + Thread.currentThread());
-                    System.out.println(stockInfo);
-                });
+        feed.onErrorResumeNext(
+                throwable -> {
+                    return callBack(throwable, companies);
+                })
+                .subscribe(System.out::println, System.out::println);
 
-        Thread.sleep(10000);
+    }
+
+    private static Observable<StockInfo> callBack(Throwable throwable, List<String> companies) {
+        System.out.println(throwable);
+        return StockServer.getFeed(companies); // Not recursive
     }
 }
