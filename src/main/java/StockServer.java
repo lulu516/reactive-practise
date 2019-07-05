@@ -11,8 +11,15 @@ public class StockServer {
     private static void processRequest(ObservableEmitter<StockInfo> subscriber, List<String> companies) {
         System.out.println("processing...");
 
-        companies.stream()
-                .map(StockFetcher::fetch)
-                .forEach(subscriber::onNext);
+        while(!subscriber.isDisposed()) {
+            companies.stream()
+                    .map(StockFetcher::fetch)
+                    .forEach(subscriber::onNext);
+        }
+
+        // should not print
+        subscriber.onNext(new StockInfo("bla", -10));
+
+        System.out.println("disposed");
     }
 }

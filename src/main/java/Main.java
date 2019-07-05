@@ -12,6 +12,12 @@ public class Main {
 
         System.out.println("got observable...");
 
-        feed.subscribe(System.out::println);
+        feed.doOnNext(System.out::println)
+                .doOnError(throwable -> System.out.println("error " + throwable))
+                .doOnComplete(() -> System.out.println("complete"))
+                .takeUntil(stockInfo -> stockInfo.getTicker().equalsIgnoreCase("facebook") && stockInfo.getPrice() > 150)
+                .subscribe();
+
+        System.out.println("done");
     }
 }

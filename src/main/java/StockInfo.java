@@ -7,6 +7,14 @@ public class StockInfo {
         this.price = price;
     }
 
+    public String getTicker() {
+        return ticker;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
     @Override
     public String toString() {
         return "StockInfo{" +
