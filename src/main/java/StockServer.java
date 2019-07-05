@@ -4,6 +4,17 @@ import io.reactivex.ObservableEmitter;
 import java.util.List;
 
 public class StockServer {
+
+    public static Observable<Integer> getData() {
+        return Observable.create(subscriber -> {
+            int count = 0;
+            while (count < 10) {
+                subscriber.onNext(count++);
+                Thread.sleep(1000);
+            }
+        });
+    }
+
     public static Observable<StockInfo> getFeed(List<String> companies) {
         return Observable.create(subscriber -> processRequest(subscriber, companies));
     }
@@ -13,7 +24,7 @@ public class StockServer {
 
         int i = 0;
 
-        while(i ++ < 5) {
+        while (i++ < 5) {
             companies.stream()
                     .map(StockFetcher::fetch)
                     .forEach(subscriber::onNext);
